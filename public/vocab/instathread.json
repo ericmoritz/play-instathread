@@ -1,0 +1,110 @@
+{
+    "@context": {
+	"it": "http://localhost:8000/instathread.json#",
+	"hydra": "http://www.w3.org/ns/hydra/core#",
+	"rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+	"rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+	"schema": "http://schema.org/"
+    },
+    "@type": "hydra:ApiDocumentation",
+    "hydra:supportedClass": [
+	{
+	    "@id": "it:EntryPoint",
+	    "@type": "hydra:Class",
+	    "rdfs:label": "Instathread Entrypoint",
+	    "rdfs:comment": "The main entry point for Instathread",
+	    "hydra:supportedProperty": [
+		{
+		    "hydra:property": {
+			"@id": "it:threads",
+			"@type": "hydra:Link",
+			"rdfs:label": "threads collection",
+			"rdfs:comment": "The threads collection for creating a new collection",
+			"hydra:SupportedOperation": [
+			    {
+				"@id": "_:createThread",
+				"@type": "hydra:CreateResourceOperation",
+				"method": "POST",
+				"rdfs:label": "Create Thread",
+				"rdfs:comment": "Use this operation to create a new thread",
+				"hydra:expects": "it:NewThreadRequest",
+				"hydra:returns": "it:Thread"
+			    }
+			]
+		    },
+		    "rdfs:label": "threads",
+		    "rdfs:comment": "The threads collection to post new threads to"
+		}
+	    ]
+	},
+	{
+	    "@id": "it:Thread",
+	    "rdfs:label": "Thread",
+	    "rdfs:comment": "A thread",
+	    "rdfs:subClassOf": "hydra:Collection",
+	    "hydra:supportedOperation": [
+		{
+		    "@type": "hydra:CreateResourceOperation",
+		    "@id": "_:createComment",
+		    "hydra:method": "POST",
+		    "hydra:expects": "it:Comment",
+		    "hydra:returns": "it:Thread"
+		}
+	    ],
+	    "hydra:supportedProperty": [
+		{
+		    "hydra:property": "hydra:member",
+		    "hydra:required": false,
+		    "hydra:readonly": true
+		}
+	    ]
+	},
+	{
+	    "@id": "it:NewThreadRequest",
+	    "rdfs:label": "New Thread",
+	    "rdfs:comment": "A new thread request",
+	    "hydra:supportedProperty": [
+		{
+		    "hydra:property": {
+			"@id": "it:authorName",
+			"@type": "rdf:property",
+			"rdf:label": "Author Name",
+			"rdf:description": "The author's name",
+			"rdfs:range": "xsd:string"
+		    },
+		    "hydra:required": false
+		},
+		{
+		    "hydra:property": {
+			"@id": "it:markdown",
+			"@type": "rdf:property",
+			"rdf:label": "Markdown Content",
+			"rdf:description": "The markdown content of the post",
+			"rdfs:range": "xsd:string"
+		    },
+		    "hydra:required": true
+		}
+	    ]
+	},
+	{
+	    "@id": "it:Comment",
+	    "rdfs:label": "Comment",
+	    "rdfs:comment": "A thread comment",
+	    "hydra:supportedProperty": [
+		{
+		    "hydra:property": "it:authorName",
+		    "hydra:required": false
+		},
+		{
+		    "hydra:property": "it:markdown",
+		    "hydra:required": true
+		},
+		{
+		    "hydra:property": "schema:dateCreated",
+		    "hydra:writeonly": "true"
+		}
+	    ]
+
+	}
+    ]
+}
