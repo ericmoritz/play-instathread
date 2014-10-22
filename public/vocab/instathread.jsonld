@@ -64,7 +64,7 @@
 			"@type": "hydra:Link",
 			"label": "threads collection",
 			"description": "The threads collection for creating a new collection",
-			"hydra:SupportedOperation": [
+			"hydra:supportedOperation": [
 			    {
 				"@id": "_:createThread",
 				"@type": "hydra:CreateResourceOperation",
