@@ -89,7 +89,7 @@ object ThreadsApplication extends Controller {
     val docUrl = routes.Assets.at("vocab/instathread.json").absoluteURL(request.secure)(request)
     cb.withHeaders(
       "Link" -> ("<" + docUrl + ">; rel=\"http://www.w3.org/ns/hydra/core#apiDocumentation\"")
-    )
+    ).as("application/ld+json")
   }
 
   def context(request: Request[AnyContent]): JsObject = Json.obj(
