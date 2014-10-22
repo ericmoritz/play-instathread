@@ -58,7 +58,7 @@ object ThreadsApplication extends Controller {
           Json.obj(
             "@id" -> request.uri,
             "@type" -> "EntryPoint",
-            "vocab:threads" -> routes.ThreadsApplication.create().absoluteURL(request.secure)(request)
+            "threads" -> routes.ThreadsApplication.create().absoluteURL(request.secure)(request)
           )
       )
     }
