@@ -1,107 +1,151 @@
 {
     "@context": {
-	"it": "http://localhost:8000/instathread.json#",
-	"hydra": "http://www.w3.org/ns/hydra/core#",
-	"rdfs": "http://www.w3.org/2000/01/rdf-schema#",
-	"rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
-	"schema": "http://schema.org/"
+	"vocab": "./instathread.json#",
+        "hydra": "http://www.w3.org/ns/hydra/core#",
+        "ApiDocumentation": "hydra:ApiDocumentation",
+        "property": {
+            "@id": "hydra:property",
+            "@type": "@id"
+        },
+        "readonly": "hydra:readonly",
+        "writeonly": "hydra:writeonly",
+        "supportedClass": "hydra:supportedClass",
+        "supportedProperty": "hydra:supportedProperty",
+        "supportedOperation": "hydra:supportedOperation",
+        "method": "hydra:method",
+        "expects": {
+            "@id": "hydra:expects",
+            "@type": "@id"
+        },
+        "returns": {
+            "@id": "hydra:returns",
+            "@type": "@id"
+        },
+        "statusCodes": "hydra:statusCodes",
+        "code": "hydra:statusCode",
+        "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+        "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+        "label": "rdfs:label",
+        "description": "rdfs:comment",
+        "domain": {
+            "@id": "rdfs:domain",
+            "@type": "@id"
+        },
+        "range": {
+            "@id": "rdfs:range",
+            "@type": "@id"
+        },
+        "subClassOf": {
+            "@id": "rdfs:subClassOf",
+            "@type": "@id"
+        }
     },
-    "@type": "hydra:ApiDocumentation",
-    "hydra:supportedClass": [
+    "@id": "./instathread.json",
+    "@type": "ApiDocumentation",
+    "supportedClass": [
 	{
-	    "@id": "it:EntryPoint",
+	    "@id": "vocab:EntryPoint",
 	    "@type": "hydra:Class",
-	    "rdfs:label": "Instathread Entrypoint",
-	    "rdfs:comment": "The main entry point for Instathread",
-	    "hydra:supportedProperty": [
+	    "label": "Instathread Entrypoint",
+	    "description": "The main entry point for Instathread",
+	    "supportedOperation": [
+		{
+		    "@id": "_:entryPoint",
+		    "@type": "hydra:Operation",
+		    "method": "GET",
+		    "label": "The APIs main entry point.",
+		    "returns": "vocab:EntryPoint"
+		}
+	    ],
+	    "supportedProperty": [
 		{
 		    "hydra:property": {
-			"@id": "it:threads",
+			"@id": "vocab:threads",
 			"@type": "hydra:Link",
-			"rdfs:label": "threads collection",
-			"rdfs:comment": "The threads collection for creating a new collection",
+			"label": "threads collection",
+			"description": "The threads collection for creating a new collection",
 			"hydra:SupportedOperation": [
 			    {
 				"@id": "_:createThread",
 				"@type": "hydra:CreateResourceOperation",
 				"method": "POST",
-				"rdfs:label": "Create Thread",
-				"rdfs:comment": "Use this operation to create a new thread",
-				"hydra:expects": "it:NewThreadRequest",
-				"hydra:returns": "it:Thread"
+				"label": "Create Thread",
+				"description": "Use this operation to create a new thread",
+				"hydra:expects": "vocab:NewThreadRequest",
+				"hydra:returns": "vocab:Thread"
 			    }
 			]
 		    },
-		    "rdfs:label": "threads",
-		    "rdfs:comment": "The threads collection to post new threads to"
+		    "label": "threads",
+		    "description": "The threads collection to post new threads to"
 		}
 	    ]
 	},
 	{
-	    "@id": "it:Thread",
-	    "rdfs:label": "Thread",
-	    "rdfs:comment": "A thread",
-	    "rdfs:subClassOf": "hydra:Collection",
-	    "hydra:supportedOperation": [
+	    "@id": "vocab:Thread",
+	    "label": "Thread",
+	    "description": "A thread",
+	    "subClassOf": "hydra:Collection",
+	    "supportedOperation": [
 		{
 		    "@type": "hydra:CreateResourceOperation",
 		    "@id": "_:createComment",
-		    "hydra:method": "POST",
-		    "hydra:expects": "it:Comment",
-		    "hydra:returns": "it:Thread"
+		    "method": "POST",
+		    "expects": "vocab:Comment",
+		    "returns": "vocab:Thread"
 		}
 	    ],
-	    "hydra:supportedProperty": [
+	    "supportedProperty": [
 		{
-		    "hydra:property": "hydra:member",
-		    "hydra:required": false,
-		    "hydra:readonly": true
+		    "property": "hydra:member",
+		    "required": false,
+		    "readonly": true
 		}
 	    ]
 	},
 	{
-	    "@id": "it:NewThreadRequest",
-	    "rdfs:label": "New Thread",
-	    "rdfs:comment": "A new thread request",
-	    "hydra:supportedProperty": [
+	    "@id": "vocab:NewThreadRequest",
+	    "label": "New Thread",
+	    "description": "A new thread request",
+	    "supportedProperty": [
 		{
-		    "hydra:property": {
-			"@id": "it:authorName",
+		    "property": {
+			"@id": "vocab:authorName",
 			"@type": "rdf:property",
-			"rdf:label": "Author Name",
-			"rdf:description": "The author's name",
-			"rdfs:range": "xsd:string"
+			"label": "Author Name",
+			"description": "The author's name",
+			"range": "xsd:string"
 		    },
-		    "hydra:required": false
+		    "required": false
 		},
 		{
-		    "hydra:property": {
-			"@id": "it:markdown",
+		    "property": {
+			"@id": "vocab:markdown",
 			"@type": "rdf:property",
-			"rdf:label": "Markdown Content",
-			"rdf:description": "The markdown content of the post",
-			"rdfs:range": "xsd:string"
+			"label": "Markdown Content",
+			"description": "The markdown content of the post",
+			"range": "xsd:string"
 		    },
-		    "hydra:required": true
+		    "required": true
 		}
 	    ]
 	},
 	{
-	    "@id": "it:Comment",
-	    "rdfs:label": "Comment",
-	    "rdfs:comment": "A thread comment",
-	    "hydra:supportedProperty": [
+	    "@id": "vocab:Comment",
+	    "label": "Comment",
+	    "description": "A thread comment",
+	    "supportedProperty": [
 		{
-		    "hydra:property": "it:authorName",
-		    "hydra:required": false
+		    "property": "vocab:authorName",
+		    "required": false
 		},
 		{
-		    "hydra:property": "it:markdown",
-		    "hydra:required": true
+		    "property": "vocab:markdown",
+		    "required": true
 		},
 		{
-		    "hydra:property": "schema:dateCreated",
-		    "hydra:writeonly": "true"
+		    "property": "schema:dateCreated",
+		    "writeonly": "true"
 		}
 	    ]
 
