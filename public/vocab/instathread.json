@@ -1,6 +1,6 @@
 {
     "@context": {
-	"vocab": "http://play-instathread.herokuapp.com/public/vocab/instathread.json#",
+	"vocab": "http://play-instathread.herokuapp.com/assets/vocab/instathread.json#",
         "hydra": "http://www.w3.org/ns/hydra/core#",
         "ApiDocumentation": "hydra:ApiDocumentation",
         "property": {
