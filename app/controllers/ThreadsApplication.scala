@@ -15,7 +15,7 @@ object ThreadsApplication extends Controller {
    ************************************************************/
   implicit var commentWrites = new Writes[Comment] {
     def writes(comment: Comment) = Json.obj(
-      "@type" -> "vocab:Comment",
+      "@type" -> "Comment",
       "vocab:authorName" -> comment.authorName,
       "schema:dateCreated" -> comment.dateCreated,
       "vocab:markdown" -> comment.markdown
@@ -24,7 +24,7 @@ object ThreadsApplication extends Controller {
 
   implicit val threadWrites = new Writes[Thread] {
     def writes(thread: Thread) = Json.obj(
-      "@type" -> "vocab:Thread",
+      "@type" -> "Thread",
       "hydra:member" -> thread.member.toSeq.sortBy(_.dateCreated)
     )
   }
