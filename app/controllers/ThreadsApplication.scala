@@ -15,9 +15,9 @@ object ThreadsApplication extends Controller {
    ************************************************************/
   implicit var commentWrites = new Writes[Comment] {
     def writes(comment: Comment) = Json.obj(
-      "it:authorName" -> comment.authorName,
+      "vocab:authorName" -> comment.authorName,
       "schema:dateCreated" -> comment.dateCreated,
-      "it:markdown" -> comment.markdown
+      "vocab:markdown" -> comment.markdown
     )
   }
 
@@ -56,8 +56,8 @@ object ThreadsApplication extends Controller {
         context(request) ++
         Json.obj(
           "@id" -> request.uri,
-          "@type" -> "it:EntryPoint",
-          "it:threads" -> routes.ThreadsApplication.create().absoluteURL(request.secure)(request)
+          "@type" -> "vocab:EntryPoint",
+          "vocab:threads" -> routes.ThreadsApplication.create().absoluteURL(request.secure)(request)
         )
     )
   }
@@ -86,7 +86,7 @@ object ThreadsApplication extends Controller {
   def context(request: Request[AnyContent]): JsObject = Json.obj(
     "@context" -> Json.obj(
       "hydra" -> "http://www.w3.org/ns/hydra/core#",
-      "it"    -> routes.Assets.at("vocab/instathread.json#").absoluteURL(request.secure)(request)
+      "vocab"    -> routes.Assets.at("vocab/instathread.json#").absoluteURL(request.secure)(request)
     ),
     "hydra:entrypoint" -> routes.ThreadsApplication.index().absoluteURL(request.secure)(request)
   )
