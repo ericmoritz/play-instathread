@@ -8,11 +8,11 @@ import play.api.data.Forms.{mapping, longNumber, nonEmptyText, text}
 import models.{Threads, Thread, Comment}
 import play.api.libs.json._
 
-case class NewThreadRequest(authorName: String, markdown: String)
-case class NewCommentRequest(authorName: String, markdown: String)
-
 
 object ThreadsApplication extends Controller {
+  /************************************************************
+   ** JSON writers
+   ************************************************************/
   implicit var commentWrites = new Writes[Comment] {
     def writes(comment: Comment) = Json.obj(
       "it:authorName" -> comment.authorName,
@@ -23,11 +23,16 @@ object ThreadsApplication extends Controller {
 
   implicit val threadWrites = new Writes[Thread] {
     def writes(thread: Thread) = Json.obj(
-      "member" -> thread.member.toSeq.sortBy(_.dateCreated)
+      "hydra:member" -> thread.member.toSeq.sortBy(_.dateCreated)
     )
   }
 
 
+  /************************************************************
+   ** Forms
+   ************************************************************/
+  case class NewThreadRequest(authorName: String, markdown: String)
+  case class NewCommentRequest(authorName: String, markdown: String)
 
   private val newThreadRequestForm: Form[NewThreadRequest] = Form(
     mapping(
@@ -43,6 +48,9 @@ object ThreadsApplication extends Controller {
     )(NewCommentRequest.apply)(NewCommentRequest.unapply)
   )
 
+  /************************************************************
+   ** Actions
+   ************************************************************/
   def index = Action { request =>
     Ok(
         context(request) ++
@@ -76,17 +84,19 @@ object ThreadsApplication extends Controller {
   }
 
   def context(request: Request[AnyContent]): JsObject = Json.obj(
-      "@context" -> Json.obj(
-        "hydra" -> "http://www.w3.org/ns/hydra/core#",
-        "it"    -> routes.Assets.at("vocab/instathread.json#").absoluteURL(request.secure)(request)
-      )
+    "@context" -> Json.obj(
+      "hydra" -> "http://www.w3.org/ns/hydra/core#",
+      "it"    -> routes.Assets.at("vocab/instathread.json#").absoluteURL(request.secure)(request)
+    ),
+    "hydra:entrypoint" -> routes.ThreadsApplication.index().absoluteURL(request.secure)(request)
   )
 
   def get(id: String) = Action { request =>
     Threads.get(id).map { thread =>
       Ok(
           context(request) ++
-          Json.toJson(thread).as[JsObject]
+          Json.toJson(thread).as[JsObject] ++
+          Json.obj("@id" -> routes.ThreadsApplication.get(thread.id).absoluteURL(request.secure)(request))
       )
     }.getOrElse(NotFound)
   }
