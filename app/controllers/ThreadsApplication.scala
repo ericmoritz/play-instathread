@@ -52,14 +52,16 @@ object ThreadsApplication extends Controller {
    ** Actions
    ************************************************************/
   def index = Action { request =>
-    Ok(
+    defaultHeaders(request) {
+      Ok(
         context(request) ++
-        Json.obj(
-          "@id" -> request.uri,
-          "@type" -> "EntryPoint",
-          "vocab:threads" -> routes.ThreadsApplication.create().absoluteURL(request.secure)(request)
-        )
-    )
+          Json.obj(
+            "@id" -> request.uri,
+            "@type" -> "EntryPoint",
+            "vocab:threads" -> routes.ThreadsApplication.create().absoluteURL(request.secure)(request)
+          )
+      )
+    }
   }
 
   def create = Action { implicit request =>
@@ -83,6 +85,13 @@ object ThreadsApplication extends Controller {
     )
   }
 
+  def defaultHeaders(request: Request[AnyContent])(cb: => Result): Result = {
+    val docUrl = routes.Assets.at("vocab/instathread.json").absoluteURL(request.secure)(request)
+    cb.withHeaders(
+      "Link" -> ("<" + docUrl + ">; rel=\"http://www.w3.org/ns/hydra/core#apiDocumentation\"")
+    )
+  }
+
   def context(request: Request[AnyContent]): JsObject = Json.obj(
     "@context" -> routes.Assets.at("contexts/instathread.json").absoluteURL(request.secure)(request),
     "entrypoint" -> routes.ThreadsApplication.index().absoluteURL(request.secure)(request)
@@ -90,11 +99,13 @@ object ThreadsApplication extends Controller {
 
   def get(id: String) = Action { request =>
     Threads.get(id).map { thread =>
-      Ok(
+      defaultHeaders(request) {
+        Ok(
           context(request) ++
-          Json.toJson(thread).as[JsObject] ++
-          Json.obj("@id" -> routes.ThreadsApplication.get(thread.id).absoluteURL(request.secure)(request))
-      )
+            Json.toJson(thread).as[JsObject] ++
+            Json.obj("@id" -> routes.ThreadsApplication.get(thread.id).absoluteURL(request.secure)(request))
+        )
+      }
     }.getOrElse(NotFound)
   }
 
