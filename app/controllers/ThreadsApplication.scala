@@ -56,7 +56,7 @@ object ThreadsApplication extends Controller {
         context(request) ++
         Json.obj(
           "@id" -> request.uri,
-          "@type" -> "vocab:EntryPoint",
+          "@type" -> "EntryPoint",
           "vocab:threads" -> routes.ThreadsApplication.create().absoluteURL(request.secure)(request)
         )
     )
@@ -84,11 +84,8 @@ object ThreadsApplication extends Controller {
   }
 
   def context(request: Request[AnyContent]): JsObject = Json.obj(
-    "@context" -> Json.obj(
-      "hydra" -> "http://www.w3.org/ns/hydra/core#",
-      "vocab"    -> routes.Assets.at("vocab/instathread.json#").absoluteURL(request.secure)(request)
-    ),
-    "hydra:entrypoint" -> routes.ThreadsApplication.index().absoluteURL(request.secure)(request)
+    "@context" -> routes.Assets.at("contexts/instathread.json").absoluteURL(request.secure)(request),
+    "entrypoint" -> routes.ThreadsApplication.index().absoluteURL(request.secure)(request)
   )
 
   def get(id: String) = Action { request =>
