@@ -19,4 +19,5 @@ conversation.  Need to discuss lunch plans? Instathread it.
 
 I don't know, print it, do a save-as or use some other service.
 
-ported from [https://github.com/ericmoritz/instathread/](https://github.com/ericmoritz/instathread/)
+* ported from [https://github.com/ericmoritz/instathread/](https://github.com/ericmoritz/instathread/)
+* [service](http://play-instathread.herokuapp.com/api/)
