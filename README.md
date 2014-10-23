@@ -21,3 +21,7 @@ I don't know, print it, do a save-as or use some other service.
 
 * ported from [https://github.com/ericmoritz/instathread/](https://github.com/ericmoritz/instathread/)
 * [service](http://play-instathread.herokuapp.com/api/)
+
+**Note** this is a project to help me learn Play and Scala; it is
+  likely not vere idomatic and will be an embaressment to my future
+  self.
