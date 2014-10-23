@@ -1,7 +1,7 @@
 {
     "@context": {
 	"hydra": "http://www.w3.org/ns/hydra/core#",
-	"vocab": "http://play-instathread.herokuapp.com/assets/vocab/instathread.jsonld#",
+	"vocab": "http://vocab-ld.org/vocabs/instathread.jsonld#",
 	"EntryPoint": "vocab:EntryPoint",
 	"Thread": "vocab:Thread",
 	"Comment": "vocab:Comment",
