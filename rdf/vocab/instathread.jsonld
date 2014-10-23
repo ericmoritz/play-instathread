@@ -1,6 +1,6 @@
 {
     "@context": {
-	"vocab": "http://vocab-ld.org/vocabs/instathread.jsonld#",
+	"vocab": "http://rdf.vocab-ld.org/vocabs/instathread.jsonld#",
         "hydra": "http://www.w3.org/ns/hydra/core#",
         "ApiDocumentation": "hydra:ApiDocumentation",
         "property": {

@@ -68,14 +68,14 @@ object ThreadsApplication extends Controller {
    ** utilities
    ************************************************************/
   def defaultHeaders(request: Request[AnyContent])(cb: => Result): Result = {
-    val docUrl = routes.Assets.at("vocab/instathread.jsonld").absoluteURL(request.secure)(request)
+    val docUrl = "http://rdf.vocab-ld.org/vocabs/instathread.jsonld"
     cb.withHeaders(
       "Link" -> ("<" + docUrl + ">; rel=\"http://www.w3.org/ns/hydra/core#apiDocumentation\"")
     ).as("application/ld+json")
   }
 
   def context(request: Request[AnyContent]): JsObject = Json.obj(
-    "@context" -> routes.Assets.at("contexts/instathread.jsonld").absoluteURL(request.secure)(request),
+    "@context" -> "http://rdf.vocab-ld.org/contexts/instathread.jsonld"
     "entrypoint" -> routes.ThreadsApplication.index().absoluteURL(request.secure)(request)
   )
 
