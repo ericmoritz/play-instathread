@@ -7,7 +7,12 @@ import play.api.data.Form
 import play.api.data.Forms.{mapping, longNumber, nonEmptyText, text}
 import models.{Threads, Thread, Comment}
 import play.api.libs.json._
-
+import com.github.jsonldjava.utils.{JsonUtils}
+import play.api.mvc.BodyParsers.parse
+import play.api.mvc.BodyParsers.parse.DEFAULT_MAX_TEXT_LENGTH
+import com.github.jsonldjava.utils.JsonUtils
+import scala.collection.JavaConversions._
+import play.api.Logger
 
 object ThreadsApplication extends Controller {
   /************************************************************
@@ -33,22 +38,47 @@ object ThreadsApplication extends Controller {
   /************************************************************
    ** Forms
    ************************************************************/
-  case class NewThreadRequest(authorName: String, markdown: String)
   case class NewCommentRequest(authorName: String, markdown: String)
 
-  private val newThreadRequestForm: Form[NewThreadRequest] = Form(
-    mapping(
-      "authorName" -> text,
-      "markdown" -> nonEmptyText
-    )(NewThreadRequest.apply)(NewThreadRequest.unapply)
+  def jsonNewCommentRequest(json: JsValue): Option[NewCommentRequest] =
+    (json \ "markdown").asOpt[String].map { markdown => 
+      NewCommentRequest(
+        (json \ "authorName").asOpt[String].getOrElse(""),
+        markdown
+      )
+    }
+
+  /************************************************************
+   ** body parsers
+   ************************************************************/
+  val jsonLdCompact = parse.using { request =>
+    val context = Seq(
+      "vocab" -> "http://play-instathread.herokuapp.com/assets/vocab/instathread.jsonld#",
+      "authorName" -> "vocab:authorName",
+      "markdown" -> "vocab:markdown"
+    ).foldLeft(new java.util.HashMap[String, String]()) { (hm, kv) => 
+      hm.put(kv._1, kv._2)
+      hm
+    }
+    parsers.tolerantJsonLd(DEFAULT_MAX_TEXT_LENGTH)(context)
+  }
+
+
+  /************************************************************
+   ** utilities
+   ************************************************************/
+  def defaultHeaders(request: Request[AnyContent])(cb: => Result): Result = {
+    val docUrl = routes.Assets.at("vocab/instathread.jsonld").absoluteURL(request.secure)(request)
+    cb.withHeaders(
+      "Link" -> ("<" + docUrl + ">; rel=\"http://www.w3.org/ns/hydra/core#apiDocumentation\"")
+    ).as("application/ld+json")
+  }
+
+  def context(request: Request[AnyContent]): JsObject = Json.obj(
+    "@context" -> routes.Assets.at("contexts/instathread.jsonld").absoluteURL(request.secure)(request),
+    "entrypoint" -> routes.ThreadsApplication.index().absoluteURL(request.secure)(request)
   )
 
-  private val newCommentForm: Form[NewCommentRequest] = Form(
-    mapping(
-      "authorName" -> text,
-      "markdown" -> nonEmptyText
-    )(NewCommentRequest.apply)(NewCommentRequest.unapply)
-  )
 
   /************************************************************
    ** Actions
@@ -66,39 +96,20 @@ object ThreadsApplication extends Controller {
     }
   }
 
-  def create = Action { implicit request =>
-    val form = newThreadRequestForm.bindFromRequest()
-    form.fold(
-      hasErrors = { form =>
-        BadRequest(form.toString())
-      },
-
-      success = { newThreadRequest =>
+  def create = Action(jsonLdCompact) { implicit request =>
+    jsonNewCommentRequest(parsers.toJsValue(request.body)).map { newCommentRequest =>
         val thread = Threads.store(
           Thread(
-            newThreadRequest.authorName,
-            newThreadRequest.markdown
+            newCommentRequest.authorName,
+            newCommentRequest.markdown
           )
         )
         Redirect(
           routes.ThreadsApplication.get(thread.id)
         )
-      }
-    )
+    }.getOrElse(BadRequest("Invalid request"))
   }
 
-
-  def defaultHeaders(request: Request[AnyContent])(cb: => Result): Result = {
-    val docUrl = routes.Assets.at("vocab/instathread.jsonld").absoluteURL(request.secure)(request)
-    cb.withHeaders(
-      "Link" -> ("<" + docUrl + ">; rel=\"http://www.w3.org/ns/hydra/core#apiDocumentation\"")
-    ).as("application/ld+json")
-  }
-
-  def context(request: Request[AnyContent]): JsObject = Json.obj(
-    "@context" -> routes.Assets.at("contexts/instathread.jsonld").absoluteURL(request.secure)(request),
-    "entrypoint" -> routes.ThreadsApplication.index().absoluteURL(request.secure)(request)
-  )
 
   def get(id: String) = Action { request =>
     Threads.get(id).map { thread =>
@@ -112,15 +123,9 @@ object ThreadsApplication extends Controller {
     }.getOrElse(NotFound)
   }
 
-  def postComment(id: String) = Action { implicit request =>
+  def postComment(id: String) = Action(jsonLdCompact) { implicit request =>
     Threads.get(id).map { thread =>
-      val form = newCommentForm.bindFromRequest()
-      form.fold(
-        hasErrors = { form =>
-          BadRequest(form.toString())
-        },
-
-        success = { comment =>
+      jsonNewCommentRequest(parsers.toJsValue(request.body)).map { comment =>
           Threads.store(
             Thread.post(
               thread, 
@@ -130,8 +135,7 @@ object ThreadsApplication extends Controller {
           Redirect(
             routes.ThreadsApplication.get(thread.id)
           )
-        }
-      )
+      }.getOrElse(BadRequest("Invalid request"))
     }.getOrElse(NotFound)
   }
 
