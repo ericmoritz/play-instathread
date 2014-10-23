@@ -71,8 +71,8 @@
 				"method": "POST",
 				"label": "Create Thread",
 				"description": "Use this operation to create a new thread",
-				"hydra:expects": "vocab:NewThreadRequest",
-				"hydra:returns": "vocab:Thread"
+				"expects": "vocab:NewThreadRequest",
+				"returns": "vocab:Thread"
 			    }
 			]
 		    },
