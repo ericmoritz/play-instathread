@@ -10,7 +10,7 @@ libraryDependencies ++= Seq(
   jdbc,
   anorm,
   cache,
-  ws
+  ws,
+  "com.github.nscala-time" %% "nscala-time" % "1.2.0",
+  "com.github.jsonld-java" % "jsonld-java" % "0.5.0"
 )
-
-libraryDependencies += "com.github.nscala-time" %% "nscala-time" % "1.2.0"
